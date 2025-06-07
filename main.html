@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JACK_827 | ماتریکس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #00ff9d;
+            --secondary: #ff0033;
+            --bg: #000;
+            --text: #00ff00;
+            --accent: #0095ff;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans Arabic', 'Courier New', monospace;
+            position: relative;
+        }
+        
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+        
+        .content {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+        }
+        
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px var(--primary);
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .tagline {
+            color: var(--accent);
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .percentage {
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .percentage::after {
+            content: '%';
+            color: var(--primary);
+        }
+        
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            text-align: right;
+            direction: rtl;
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.1), transparent);
+            transition: 0.4s;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        h2 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        ul {
+            margin: 10px 0;
+            padding-left: 0;
+            padding-right: 20px;
+            list-style-type: none;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        li::before {
+            content: ">> ";
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 8px;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--primary);
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+        }
+        
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--accent);
+            border-top: 1px solid var(--primary);
+            padding-top: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: var(--primary);
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Special Kurdish text styling */
+        .kurdish-text {
+            font-family: 'Noto Sans Arabic', sans-serif;
+            font-weight: 400;
+        }
+        
+        .icon {
+            font-size: 1.1em;
+        }
+        
+        /* Glitch effect */
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 #00ff9d, -0.05em -0.025em 0 #ff0033; }
+            14% { text-shadow: 0.05em 0 0 #00ff9d, -0.05em -0.025em 0 #ff0033; }
+            15% { text-shadow: -0.05em -0.025em 0 #00ff9d, 0.025em 0.025em 0 #ff0033; }
+            49% { text-shadow: -0.05em -0.025em 0 #00ff9d, 0.025em 0.025em 0 #ff0033; }
+            50% { text-shadow: 0.025em 0.05em 0 #00ff9d, 0.05em 0 0 #ff0033; }
+            99% { text-shadow: 0.025em 0.05em 0 #00ff9d, 0.05em 0 0 #ff0033; }
+            100% { text-shadow: -0.025em 0 0 #00ff9d, -0.025em -0.025em 0 #ff0033; }
+        }
+        
+        .glitch {
+            animation: glitch 650ms infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    
+    <div class="content">
+        <header>
+            <h1>JACK_827</h1>
+            <p class="tagline">// SYSTEM INITIALIZED: <span class="percentage glitch">0</span></p>
+        </header>
+        
+        <div class="cards">
+            <div class="card">
+                <h2 class="kurdish-text"><i class="fab fa-telegram icon"></i> چەناڵی تیلیگرام</h2>
+                <ul>
+                    <li class="kurdish-text">فێرکاری هاکینگی رۆبلۆکس</li>
+                    <li class="kurdish-text">زانیاری تەکنەلۆژیا</li>
+                    <li class="kurdish-text">ئەکاونتی رۆبلۆکس</li>
+                    <li class="kurdish-text">داگرتنی بەرنامەکان</li>
+                </ul>
+                <a href="https://t.me/jack_827" class="btn" target="_blank"><i class="fab fa-telegram"></i> چوونە ژوورەوە <span class="cursor"></span></a>
+            </div>
+            
+            <div class="card">
+                <h2 class="kurdish-text"><i class="fas fa-robot icon"></i> بۆتی تیلیگرام</h2>
+                <ul>
+                    <li class="kurdish-text">هاکینگی ئایفۆن و ئەندرۆید</li>
+                    <li class="kurdish-text">فێرکاری هاکینگ</li>
+                    <li class="kurdish-text">هەموو شتێک دەربارەی رۆبلۆکس</li>
+                    <li class="kurdish-text">ئامرازە بەسوودەکان</li>
+                </ul>
+                <a href="https://t.me/jack_827_bot" class="btn" target="_blank"><i class="fas fa-robot"></i> کردنەوە <span class="cursor"></span></a>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 JACK_827 | سیستەم چالاکە</p>
+        </footer>
+    </div>
+
+    <script>
+        // Intense katakana matrix effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+        
+        const alphabet = katakana + latin + nums + symbols;
+        
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        
+        const rainDrops = [];
+        
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = {
+                y: Math.random() * -100,
+                speed: 2 + Math.random() * 5,
+                char: alphabet.charAt(Math.floor(Math.random() * alphabet.length))
+            };
+        }
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = rainDrops[i].char;
+                ctx.fillText(text, i * fontSize, rainDrops[i].y * fontSize);
+                
+                // Add trail effect
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+                ctx.fillText(text, i * fontSize, (rainDrops[i].y - 0.5) * fontSize);
+                ctx.fillText(text, i * fontSize, (rainDrops[i].y - 1) * fontSize);
+                ctx.fillStyle = '#0F0';
+                
+                if (rainDrops[i].y * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i].y = 0;
+                    rainDrops[i].char = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                }
+                rainDrops[i].y += rainDrops[i].speed / 10;
+            }
+        };
+        
+        setInterval(draw, 30);
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Percentage counter effect
+        const percentageElement = document.querySelector('.percentage');
+        let currentPercentage = 0;
+        const targetPercentage = 100;
+        const duration = 3000; // 3 seconds
+        const increment = targetPercentage / (duration / 16); // 60fps
+        
+        const updatePercentage = () => {
+            currentPercentage += increment;
+            if (currentPercentage < targetPercentage) {
+                percentageElement.textContent = Math.floor(currentPercentage);
+                requestAnimationFrame(updatePercentage);
+            } else {
+                percentageElement.textContent = targetPercentage;
+                // Add pulse effect when complete
+                percentageElement.style.animation = 'glitch 650ms infinite';
+            }
+        };
+        
+        // Start counter after short delay
+        setTimeout(() => {
+            updatePercentage();
+        }, 500);
+    </script>
+</body>
+</html>
